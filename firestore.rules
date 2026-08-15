@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // User Document & Subcollections
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // Allow users full read/write access to their own assessment data and history
+      match /assessments/{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      match /history/{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      match /mbti_records/{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      match /tarot_readings/{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      match /astrology_charts/{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      match /iching_readings/{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      match /dream_journals/{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      match /philosophy_results/{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+    
+    // Public Community Soul Resonance (Read-only for other users)
+    match /public_resonances/{resonanceId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && resource.data.authorUid == request.auth.uid;
+    }
+  }
+}
